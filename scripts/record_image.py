@@ -73,6 +73,8 @@ def main():
 
     rows = values('A1:ZZ2')
     headers = [text(cell) for cell in rows[0]]
+    while headers and not headers[-1]:
+        headers.pop()
     if args.resolve:
         if args.component not in headers:
             raise SystemExit('Component column not found')
@@ -106,6 +108,8 @@ def main():
             'range': f'{sid}!A4:A4', 'values': [[today]]}}, 'POST')
         row = 4
     write(f'{col}{row}', args.tag)
+    assert text(values(f'{col}1:{col}1')[0][0]) == args.component
+    assert text(values(f'{col}2:{col}2')[0][0]) == args.repository
     assert text(values(f'{col}{row}:{col}{row}')[0][0]) == args.tag
     print(f'{args.sheet}: {args.component} -> {args.repository}:{args.tag}')
 
