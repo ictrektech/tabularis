@@ -1,4 +1,10 @@
-# PGV
+# PGV · Tabularis
+
+PGV combines PostgreSQL 17, shared Redis and the Tabularis database workspace.
+Open PGV from the VOS sidebar as the VOS admin: PostgreSQL and Redis open
+automatically without entering database credentials. Use SQL queries, browse
+tables and inspect Redis keys. The existing application ID, PostgreSQL endpoints,
+host ports, application databases, roles and storage paths remain compatible.
 
 Updates from older PGV releases, including 0.0.33, detect the actual PostgreSQL
 major and installed extensions. PG16 data is exported and restored privately
@@ -45,13 +51,13 @@ When VOS is reached through an external port mapping, use the HTTPS URL for that
 gateway port. Direct `http://<vos-host>:1180/app/com.ictrek.pgv/` requests return
 the platform 404 response.
 
-Direct host-port debugging URL:
+Direct host-port debugging URL (page login still requires the VOS sidebar bridge):
 
 ```text
 http://<vos-host>:25433/app/com.ictrek.pgv/
 ```
 
-The viewer connects to:
+Tabularis automatically opens this PostgreSQL connection and shared Redis DB 0:
 
 ```text
 postgres://postgres:<VOS_POSTGRES_PASSWORD>@pgv:5432/postgres
@@ -208,3 +214,11 @@ VOS-injected credentials. Host ports, aliases, databases, roles and migration
 paths are unchanged. Settings and encrypted credentials persist in
 `${VOS_APP_STORAGE_PATH}/viewer`. The shared database administration workspace
 is available only to the server-verified VOS admin account.
+
+## Source and builds
+
+The unified source lives in [ictrektech/tabularis](https://github.com/ictrektech/tabularis)
+at `apps/tabularis` in VAI. Original PGV build and migration sources live in `pgv/`.
+PGV and Tabularis share one VOS packaging and release flow; published database
+images can be reused. Bundled PostgreSQL and Redis drivers work without the online
+plugin registry. Optional plugin updates can be refreshed manually in Settings.

@@ -93,3 +93,6 @@ well as the existing transport and bootstrap tests. Container acceptance must
 also verify native authentication rejection, idempotent managed connections,
 PostgreSQL queries, Redis reads/writes, WebSocket upgrade and persisted secrets
 after recreation. A build or a reachable health port alone is not VOS UI acceptance.
+
+The VOS workspace does not fetch the optional plugin registry on startup. Bundled
+PostgreSQL and Redis drivers remain available offline; Settings supports explicit refresh.

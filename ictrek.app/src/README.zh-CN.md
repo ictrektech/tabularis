@@ -1,7 +1,11 @@
-# PGV
+# PGV · Tabularis
 
-该应用在 `vos_default` Docker 网络中提供共享 Postgres 服务，并为 WeKnora、
-Immich、Nowen Video 预置独立数据库、用户和扩展。
+该应用统一提供 PostgreSQL 17、共享 Redis 和 Tabularis 数据管理界面。
+在 VOS 侧边栏打开 PGV，使用 VOS 管理员登录后，PostgreSQL 与 Redis 会自动连接，
+无需手动输入数据库凭据。支持 SQL 查询、表数据浏览和 Redis 键值查看。
+
+原 PGV 的应用 ID、PostgreSQL 地址、宿主机端口、业务数据库、用户和数据目录保持兼容。
+应用在 `vos_default` Docker 网络中为 WeKnora、Immich、Nowen Video 预置独立数据库、用户和扩展。
 
 从旧 PGV（包括 0.0.33）更新时，安装器按实际 PostgreSQL 版本和扩展自动迁移
 PG16 数据，成功恢复、初始化后才切换到 PG17，并保留原 PG16 目录和备份。
@@ -41,13 +45,13 @@ https://<vos-host>:1180/app/com.ictrek.pgv/
 如果通过外部端口映射访问 VOS 网关，也必须使用该网关端口对应的 HTTPS 地址。
 直接使用 `http://<vos-host>:1180/app/com.ictrek.pgv/` 会返回平台 404。
 
-宿主机直连调试地址：
+宿主机调试端口（页面登录仍需由 VOS 侧边栏注入登录桥接）：
 
 ```text
 http://<vos-host>:25433/app/com.ictrek.pgv/
 ```
 
-浏览器服务默认连接：
+Tabularis 自动打开以下 PostgreSQL 连接，以及共享 Redis 的 DB 0：
 
 ```text
 postgres://postgres:<VOS_POSTGRES_PASSWORD>@pgv:5432/postgres
@@ -188,3 +192,10 @@ PG17 接受新写入后，旧 PG16 备份不能直接代替当前数据。
 宿主机端口与别名保持不变；Redis 也不占用其他应用的别名。
 连接设置和加密密钥保存在 `${VOS_APP_STORAGE_PATH}/viewer`，重启和升级时保留。
 共享数据库管理页仅向经服务端验证的 VOS admin 账户开放。
+
+## 源码与构建
+
+源码统一维护在 [ictrektech/tabularis](https://github.com/ictrektech/tabularis)，
+VAI 路径为 `apps/tabularis`，原 PGV 构建与迁移源码位于 `pgv/`。
+PGV 与 Tabularis 使用同一套 VOS 打包和发布流程，数据库镜像可复用已发布版本。
+内置 PostgreSQL 和 Redis 驱动不依赖在线插件目录；可在设置中手动刷新可选插件。

@@ -12,7 +12,7 @@ export function PluginRegistryProvider({children}: {children: ReactNode}) {
     const {settings, isLoading: settingsLoading} = useSettings();
     const client = useTabularisClient();
     const [plugins, setPlugins] = useState<RegistryPluginWithStatus[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(import.meta.env.BASE_URL !== '/app/com.ictrek.pgv/');
     const [error, setError] = useState<string | null>(null);
     const registryUrl = settings.tabulariumRegistryUrl;
     const requestId = useRef(0);
@@ -41,7 +41,8 @@ export function PluginRegistryProvider({children}: {children: ReactNode}) {
     }, [client, registryUrl]);
 
     useEffect(() => {
-        if (settingsLoading) return;
+        // Bundled PG/Redis drivers work offline; fetch optional updates on explicit refresh.
+        if (settingsLoading || import.meta.env.BASE_URL === '/app/com.ictrek.pgv/') return;
         refresh();
         return () => {
             requestId.current += 1;
