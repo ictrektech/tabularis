@@ -1,0 +1,12 @@
+routers:
+  - id: pgv
+    kind: page
+    title:
+      zh-CN: PGV
+      en: PGV
+    icon: lucide:database
+    order: 200
+    iframe-src: /app/com.ictrek.pgv/
+    keep-alive: true
+    entry-point: true
+    embed: true

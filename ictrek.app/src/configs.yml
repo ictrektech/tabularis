@@ -1,0 +1,124 @@
+configs:
+  - name: ICTREK_PGV_PORT
+    type: integer
+    title:
+      zh-CN: 宿主机端口
+      en: Host Port
+    description:
+      zh-CN: 环境变量 ICTREK_PGV_PORT。Postgres 映射到宿主机的调试端口，默认 25432；vos_default 网络内应用仍使用 ictrek-pgv:5432。
+      en: Environment variable ICTREK_PGV_PORT. Host debug port for Postgres, default 25432; apps on vos_default still use ictrek-pgv:5432.
+    default: 25432
+    minimum: 1024
+    maximum: 65535
+
+  - name: PGV_VIEWER_PORT
+    type: integer
+    title:
+      zh-CN: 数据浏览器端口
+      en: Data Viewer Port
+    description:
+      zh-CN: 环境变量 PGV_VIEWER_PORT。Tabularis 数据浏览器映射到宿主机的直连调试端口，默认 25433；VOS 侧边栏仍通过 /app/com.ictrek.pgv/ 访问。
+      en: Environment variable PGV_VIEWER_PORT. Direct host debug port for Tabularis, default 25433; the VOS sidebar still uses /app/com.ictrek.pgv/.
+    default: 25433
+    minimum: 1024
+    maximum: 65535
+
+  - name: PGV_VIEWER_DB_NAME
+    type: string
+    title:
+      zh-CN: 数据浏览器默认数据库
+      en: Data Viewer Default Database
+    description:
+      zh-CN: 环境变量 PGV_VIEWER_DB_NAME。Tabularis 打开后默认连接的数据库，默认 postgres；如需默认查看 WeKnora 或 Immich，可改成 WeKnora 或 immich。
+      en: Environment variable PGV_VIEWER_DB_NAME. Default database opened by Tabularis, default postgres; use WeKnora or immich to open those databases by default.
+    default: postgres
+
+  - name: POSTGRES_SHARED_PRELOAD_LIBRARIES
+    type: string
+    title:
+      zh-CN: 预加载扩展
+      en: Shared Preload Libraries
+    description:
+      zh-CN: 环境变量 POSTGRES_SHARED_PRELOAD_LIBRARIES。默认 pg_search,pg_cron,vchord.so,vectors.so,pg_ivm；用于搜索、向量和增量物化视图。
+      en: Environment variable POSTGRES_SHARED_PRELOAD_LIBRARIES. Default pg_search,pg_cron,vchord.so,vectors.so,pg_ivm; supports search, vectors and incremental materialized views.
+    default: pg_search,pg_cron,vchord.so,vectors.so,pg_ivm
+
+  - name: POSTGRES_ARM_SHARED_PRELOAD_LIBRARIES
+    type: string
+    title:
+      zh-CN: ARM 预加载扩展
+      en: ARM Shared Preload Libraries
+    description:
+      zh-CN: ARM 镜像默认 pg_search,pg_cron,vchord.so,vectors.so,pg_ivm。使用 PG17 上游 ARM64 二进制；部署到 BM1688 或 64 KiB 页面系统前须进行实机验证。
+      en: ARM defaults to pg_search,pg_cron,vchord.so,vectors.so,pg_ivm. The PG17 image uses upstream ARM64 binaries; verify on BM1688 or 64 KiB-page hosts before deployment.
+    default: pg_search,pg_cron,vchord.so,vectors.so,pg_ivm
+
+  - name: WEKNORA_DB_NAME
+    type: string
+    title:
+      zh-CN: WeKnora 数据库
+      en: WeKnora Database
+    description:
+      zh-CN: 环境变量 WEKNORA_DB_NAME。provision 会创建的 WeKnora 独立数据库名，默认 WeKnora；WeKnora 侧 DB_NAME 应填写这个值。
+      en: Environment variable WEKNORA_DB_NAME. Dedicated WeKnora database created by the provisioner, default WeKnora; use this value as DB_NAME in WeKnora.
+    default: WeKnora
+
+  - name: WEKNORA_DB_USER
+    type: string
+    title:
+      zh-CN: WeKnora 用户
+      en: WeKnora User
+    description:
+      zh-CN: 环境变量 WEKNORA_DB_USER。provision 会创建的 WeKnora 数据库用户，默认 weknora；WeKnora 侧 DB_USER 应填写这个值。
+      en: Environment variable WEKNORA_DB_USER. Dedicated WeKnora database user created by the provisioner, default weknora; use this value as DB_USER in WeKnora.
+    default: weknora
+
+  - name: WEKNORA_DB_PASSWORD
+    type: string
+    title:
+      zh-CN: WeKnora 密码
+      en: WeKnora Password
+    description:
+      zh-CN: 环境变量 WEKNORA_DB_PASSWORD。WeKnora 数据库用户密码，默认 weknora；WeKnora 侧 DB_PASSWORD 应填写这个值。
+      en: Environment variable WEKNORA_DB_PASSWORD. Password for the WeKnora database user, default weknora; use this value as DB_PASSWORD in WeKnora.
+    default: weknora
+
+  - name: IMMICH_DB_NAME
+    type: string
+    title:
+      zh-CN: Immich 数据库
+      en: Immich Database
+    description:
+      zh-CN: 环境变量 IMMICH_DB_NAME。provision 会创建的 Immich 独立数据库名，默认 immich；Immich 侧 DB_DATABASE_NAME 应填写这个值。
+      en: Environment variable IMMICH_DB_NAME. Dedicated Immich database created by the provisioner, default immich; use this value as DB_DATABASE_NAME in Immich.
+    default: immich
+
+  - name: IMMICH_DB_USER
+    type: string
+    title:
+      zh-CN: Immich 用户
+      en: Immich User
+    description:
+      zh-CN: 环境变量 IMMICH_DB_USER。provision 会创建的 Immich 数据库用户，默认 immich；Immich 侧 DB_USERNAME 应填写这个值。
+      en: Environment variable IMMICH_DB_USER. Dedicated Immich database user created by the provisioner, default immich; use this value as DB_USERNAME in Immich.
+    default: immich
+
+  - name: IMMICH_DB_PASSWORD
+    type: string
+    title:
+      zh-CN: Immich 密码
+      en: Immich Password
+    description:
+      zh-CN: 环境变量 IMMICH_DB_PASSWORD。Immich 数据库用户密码，默认 immich；Immich 侧 DB_PASSWORD 应填写这个值。
+      en: Environment variable IMMICH_DB_PASSWORD. Password for the Immich database user, default immich; use this value as DB_PASSWORD in Immich.
+    default: immich
+
+  - name: IMMICH_DB_SUPERUSER
+    type: boolean
+    title:
+      zh-CN: Immich 用户超级权限
+      en: Immich User Superuser
+    description:
+      zh-CN: 环境变量 IMMICH_DB_SUPERUSER。是否给 Immich 用户授予 superuser，默认 true；Immich 备份、恢复和扩展管理通常需要。
+      en: Environment variable IMMICH_DB_SUPERUSER. Whether to grant superuser to the Immich user, default true; usually needed for Immich backup, restore, and extension management.
+    default: true

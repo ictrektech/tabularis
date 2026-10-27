@@ -78,6 +78,21 @@ class FakeWebSocket implements WebSocketLike {
 }
 
 describe('HttpTransport', () => {
+    it('keeps session and RPC requests under a reverse-proxy mount path', async () => {
+        const fetchRequest = vi.fn<typeof fetch>()
+            .mockResolvedValueOnce(jsonResponse(SESSION))
+            .mockResolvedValueOnce(jsonResponse({ok: true, data: true}));
+        const transport = new HttpTransport({
+            baseUrl: 'https://vos.example/app/com.ictrek.pgv/', fetch: fetchRequest,
+        });
+        await transport.initialize();
+        await transport.call('is_debug_mode', undefined);
+        expect(fetchRequest.mock.calls.map(([url]) => url)).toEqual([
+            'https://vos.example/app/com.ictrek.pgv/api/v1/session',
+            'https://vos.example/app/com.ictrek.pgv/api/v1/rpc/is_debug_mode',
+        ]);
+    });
+
     afterEach(() => {
         vi.useRealTimers();
     });

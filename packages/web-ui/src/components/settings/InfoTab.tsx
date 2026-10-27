@@ -85,7 +85,7 @@ export function InfoTab() {
 
                 <div className="p-2">
                     <img
-                        src="/logo.svg"
+                        src={`${import.meta.env.BASE_URL}logo.svg`}
                         alt="tabularis"
                         className="w-16 h-16 rounded-2xl mx-auto mb-4 shadow-lg shadow-accent-primary/30"
                         style={{

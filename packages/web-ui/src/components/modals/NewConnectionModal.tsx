@@ -291,7 +291,9 @@ export const NewConnectionModal = ({
     const isEditing = Boolean(initialConnection);
     const [step, setStep] = useState<'catalogue' | 'form'>(isEditing ? 'form' : 'catalogue');
     const [pendingGroup, setPendingGroup] = useState<EngineGroup | null>(null);
-    const catalogue = useConnectionCatalogue();
+    const catalogue = useConnectionCatalogue(
+        import.meta.env.BASE_URL !== '/app/com.ictrek.pgv/' || isOpen,
+    );
 
     // ── form state ──
     const [driver, setDriver] = useState<string>('mysql');

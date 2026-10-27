@@ -1,0 +1,227 @@
+x-ictrek-pgv-base: &ictrek-pgv-base
+  restart: unless-stopped
+  shm_size: ${POSTGRES_SHM_SIZE:-256mb}
+  networks:
+    vos_default:
+      aliases:
+        - pgv
+        - ictrek-pgv
+        - shared-pgv
+  ports:
+    - "${ICTREK_PGV_PORT:-25432}:5432"
+  environment:
+    POSTGRES_USER: ${POSTGRES_SUPERUSER:-postgres}
+    POSTGRES_PASSWORD: ${VOS_POSTGRES_PASSWORD:?VOS_POSTGRES_PASSWORD is required}
+    POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    POSTGRES_INITDB_ARGS: "${POSTGRES_INITDB_ARGS:---data-checksums}"
+    DB_STORAGE_TYPE: ${DB_STORAGE_TYPE:-}
+  volumes:
+    - ${VOS_APP_STORAGE_PATH}/data:/var/lib/postgresql/data
+    - ${VOS_APP_STORAGE_PATH}/config:/etc/ictrek-pgv
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_SUPERUSER:-postgres} -d ${POSTGRES_DB:-postgres}"]
+    interval: 10s
+    timeout: 10s
+    start_period: 30s
+    retries: 6
+  stop_grace_period: 5m
+
+x-ictrek-pgv-arm-base: &ictrek-pgv-arm-base
+  <<: *ictrek-pgv-base
+  command: ["postgres", "-c", "shared_preload_libraries=${POSTGRES_ARM_SHARED_PRELOAD_LIBRARIES:-pg_search,pg_cron,vchord.so,vectors.so,pg_ivm}"]
+
+x-ictrek-pgv-amd-base: &ictrek-pgv-amd-base
+  <<: *ictrek-pgv-base
+  command: ["postgres", "-c", "shared_preload_libraries=${POSTGRES_SHARED_PRELOAD_LIBRARIES:-pg_search,pg_cron,vchord.so,vectors.so,pg_ivm}"]
+
+x-ictrek-pgv-migrate-base: &ictrek-pgv-migrate-base
+  restart: "no"
+  network_mode: none
+  environment:
+    POSTGRES_USER: ${POSTGRES_SUPERUSER:-postgres}
+    POSTGRES_PASSWORD: ${VOS_POSTGRES_PASSWORD:?VOS_POSTGRES_PASSWORD is required}
+    POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    POSTGRES_INITDB_ARGS: "${POSTGRES_INITDB_ARGS:---data-checksums}"
+    WEKNORA_DB_NAME: ${WEKNORA_DB_NAME:-WeKnora}
+    WEKNORA_DB_USER: ${WEKNORA_DB_USER:-weknora}
+    WEKNORA_DB_PASSWORD: ${WEKNORA_DB_PASSWORD:-weknora}
+    IMMICH_DB_NAME: ${IMMICH_DB_NAME:-immich}
+    IMMICH_DB_USER: ${IMMICH_DB_USER:-immich}
+    IMMICH_DB_PASSWORD: ${IMMICH_DB_PASSWORD:-immich}
+    IMMICH_DB_SUPERUSER: ${IMMICH_DB_SUPERUSER:-true}
+    NOWEN_DB_NAME: ${NOWEN_DB_NAME:-nowen_video}
+    NOWEN_DB_USER: ${NOWEN_DB_USER:-nowen}
+    NOWEN_DB_PASSWORD: ${NOWEN_DB_PASSWORD:-nowen_password}
+  volumes:
+    - ${VOS_APP_STORAGE_PATH}:/pgv-storage
+    - ./init:/init:ro
+  entrypoint: ["/bin/bash", "/init/auto-migrate.sh"]
+
+x-ictrek-pgv-provision-base: &ictrek-pgv-provision-base
+  restart: "no"
+  networks:
+    - vos_default
+  environment:
+    PGHOST: pgv
+    PGPORT: "5432"
+    PGUSER: ${POSTGRES_SUPERUSER:-postgres}
+    PGPASSWORD: ${VOS_POSTGRES_PASSWORD:?VOS_POSTGRES_PASSWORD is required}
+    PGDATABASE: ${POSTGRES_DB:-postgres}
+    WEKNORA_DB_NAME: ${WEKNORA_DB_NAME:-WeKnora}
+    WEKNORA_DB_USER: ${WEKNORA_DB_USER:-weknora}
+    WEKNORA_DB_PASSWORD: ${WEKNORA_DB_PASSWORD:-weknora}
+    IMMICH_DB_NAME: ${IMMICH_DB_NAME:-immich}
+    IMMICH_DB_USER: ${IMMICH_DB_USER:-immich}
+    IMMICH_DB_PASSWORD: ${IMMICH_DB_PASSWORD:-immich}
+    IMMICH_DB_SUPERUSER: ${IMMICH_DB_SUPERUSER:-true}
+    NOWEN_DB_NAME: ${NOWEN_DB_NAME:-nowen_video}
+    NOWEN_DB_USER: ${NOWEN_DB_USER:-nowen}
+    NOWEN_DB_PASSWORD: ${NOWEN_DB_PASSWORD:-nowen_password}
+  volumes:
+    - ./init:/init:ro
+  entrypoint: ["/bin/bash", "/init/provision.sh"]
+
+x-ictrek-pgv-viewer-base: &ictrek-pgv-viewer-base
+  pull_policy: always
+  restart: unless-stopped
+  networks:
+    vos_default:
+      aliases: [pgv-viewer]
+  ports:
+    - "${PGV_VIEWER_PORT:-25433}:8081"
+  environment:
+    VOS_USERINFO_URL: http://${VOS_HOST_GW_IP}:${VOS_API_GW_PORT_INTERNAL}/v1000/oauth2/userinfo
+    PGHOST: pgv
+    PGPORT: "5432"
+    PGUSER: ${POSTGRES_SUPERUSER:-postgres}
+    PGPASSWORD: ${VOS_POSTGRES_PASSWORD:?VOS_POSTGRES_PASSWORD is required}
+    PGDATABASE: ${PGV_VIEWER_DB_NAME:-postgres}
+    PGV_REDIS_HOST: pgv-redis
+    PGV_REDIS_PASSWORD: ${VOS_REDIS_PASSWORD:?VOS_REDIS_PASSWORD is required}
+  volumes:
+    - ${VOS_APP_STORAGE_PATH}/viewer:/data
+  labels:
+    - "traefik.enable=true"
+    - "traefik.docker.network=vos_default"
+    - "traefik.http.routers.ictrek-pgv-top-open.rule=PathPrefix(`/app/com.ictrek.pgv`) && HeadersRegexp(`Sec-Fetch-Dest`, `document`)"
+    - "traefik.http.routers.ictrek-pgv-top-open.priority=1000"
+    - "traefik.http.routers.ictrek-pgv-top-open.service=ictrek-pgv-viewer"
+    - "traefik.http.routers.ictrek-pgv-top-open.middlewares=ictrek-pgv-top-open-redirect"
+    - "traefik.http.middlewares.ictrek-pgv-top-open-redirect.redirectregex.regex=^(https?://[^/]+)/app/com\\.ictrek\\.pgv/?(?:\\?.*)?$"
+    - "traefik.http.middlewares.ictrek-pgv-top-open-redirect.redirectregex.replacement=$${1}/#/app/com.ictrek.pgv/pgv"
+    - "traefik.http.middlewares.ictrek-pgv-top-open-redirect.redirectregex.permanent=false"
+    - "traefik.http.routers.ictrek-pgv-viewer.rule=PathPrefix(`/app/com.ictrek.pgv`)"
+    - "traefik.http.routers.ictrek-pgv-viewer.service=ictrek-pgv-viewer"
+    - "traefik.http.routers.ictrek-pgv-viewer.middlewares=ictrek-pgv-viewer-slash"
+    - "traefik.http.middlewares.ictrek-pgv-viewer-slash.redirectregex.regex=^(.*)/app/com\\.ictrek\\.pgv$"
+    - "traefik.http.middlewares.ictrek-pgv-viewer-slash.redirectregex.replacement=$${1}/app/com.ictrek.pgv/"
+    - "traefik.http.middlewares.ictrek-pgv-viewer-slash.redirectregex.permanent=true"
+    - "traefik.http.services.ictrek-pgv-viewer.loadbalancer.server.port=8081"
+
+# A dedicated shared cache; never claim the platform's redis or HybRAG's alias.
+x-ictrek-pgv-redis-base: &ictrek-pgv-redis-base
+  restart: unless-stopped
+  networks:
+    vos_default:
+      aliases:
+        - pgv-redis
+        - ictrek-pgv-redis
+  environment:
+    REDIS_PASSWORD: ${VOS_REDIS_PASSWORD:?VOS_REDIS_PASSWORD is required}
+  entrypoint: ["/bin/sh", "-ec"]
+  command:
+    - 'exec /usr/local/bin/docker-entrypoint.sh redis-server --appendonly yes --appendfsync everysec --maxmemory-policy noeviction --requirepass "$$REDIS_PASSWORD"'
+  volumes:
+    - ${VOS_APP_STORAGE_PATH}/redis:/data
+  healthcheck:
+    test: ["CMD-SHELL", 'REDISCLI_AUTH="$$REDIS_PASSWORD" redis-cli ping | grep -qx PONG']
+    interval: 10s
+    timeout: 5s
+    retries: 6
+    start_period: 10s
+  stop_grace_period: 30s
+
+services:
+  ictrek-pgv-redis-arm:
+    <<: *ictrek-pgv-redis-base
+    profiles: ["arm"]
+    image: ${REDIS_ARM_IMAGE}
+    pull_policy: always
+
+  ictrek-pgv-redis-amd:
+    <<: *ictrek-pgv-redis-base
+    profiles: ["amd"]
+    image: ${REDIS_AMD_IMAGE}
+    pull_policy: always
+
+  ictrek-pgv-migrate-arm:
+    <<: *ictrek-pgv-migrate-base
+    profiles: ["arm"]
+    image: ${POSTGRES_ARM_IMAGE}
+    pull_policy: always
+
+  ictrek-pgv-migrate-amd:
+    <<: *ictrek-pgv-migrate-base
+    profiles: ["amd"]
+    image: ${POSTGRES_AMD_IMAGE}
+    pull_policy: always
+
+  ictrek-pgv-arm:
+    <<: *ictrek-pgv-arm-base
+    profiles: ["arm"]
+    image: ${POSTGRES_ARM_IMAGE}
+    pull_policy: always
+    depends_on:
+      ictrek-pgv-migrate-arm:
+        condition: service_completed_successfully
+
+  ictrek-pgv-amd:
+    <<: *ictrek-pgv-amd-base
+    profiles: ["amd"]
+    image: ${POSTGRES_AMD_IMAGE}
+    pull_policy: always
+    depends_on:
+      ictrek-pgv-migrate-amd:
+        condition: service_completed_successfully
+
+  ictrek-pgv-provision-arm:
+    <<: *ictrek-pgv-provision-base
+    profiles: ["arm"]
+    image: ${POSTGRES_ARM_IMAGE}
+    pull_policy: always
+    depends_on:
+      ictrek-pgv-arm:
+        condition: service_healthy
+
+  ictrek-pgv-provision-amd:
+    <<: *ictrek-pgv-provision-base
+    profiles: ["amd"]
+    image: ${POSTGRES_AMD_IMAGE}
+    pull_policy: always
+    depends_on:
+      ictrek-pgv-amd:
+        condition: service_healthy
+
+  ictrek-pgv-viewer-arm:
+    <<: *ictrek-pgv-viewer-base
+    profiles: ["arm"]
+    image: ${TABULARIS_ARM_IMAGE}
+    depends_on:
+      ictrek-pgv-redis-arm:
+        condition: service_healthy
+      ictrek-pgv-provision-arm:
+        condition: service_completed_successfully
+
+  ictrek-pgv-viewer-amd:
+    <<: *ictrek-pgv-viewer-base
+    profiles: ["amd"]
+    image: ${TABULARIS_AMD_IMAGE}
+    depends_on:
+      ictrek-pgv-redis-amd:
+        condition: service_healthy
+      ictrek-pgv-provision-amd:
+        condition: service_completed_successfully
+
+networks:
+  vos_default:
+    external: true

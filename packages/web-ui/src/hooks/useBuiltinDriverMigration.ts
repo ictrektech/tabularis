@@ -111,6 +111,8 @@ export function useBuiltinDriverMigration(
     builtinId: string,
     pluginId: string,
 ): BuiltinDriverMigrationState {
+    // VOS ships and validates the built-in PostgreSQL driver for offline operation.
+    const migrationEnabled = import.meta.env.BASE_URL !== '/app/com.ictrek.pgv/';
     const {
         connections,
         loadConnections,
@@ -121,7 +123,7 @@ export function useBuiltinDriverMigration(
     } = useDatabase();
     const {allDrivers, installedPlugins} = useDrivers();
     const {registryOffline} = useConnectionCatalogue(
-        connections.some((connection) => connection.params.driver === builtinId),
+        migrationEnabled && connections.some((connection) => connection.params.driver === builtinId),
     );
     const {settings, updateSetting} = useSettings();
     const client = useTabularisClient();
@@ -154,8 +156,8 @@ export function useBuiltinDriverMigration(
     // Connections still on the built-in driver — the trigger condition and the
     // set eligible to migrate.
     const builtinConnections = useMemo(
-        () => connections.filter((c) => c.params.driver === builtinId),
-        [connections, builtinId],
+        () => migrationEnabled ? connections.filter((c) => c.params.driver === builtinId) : [],
+        [connections, builtinId, migrationEnabled],
     );
 
     const needsMigration = builtinConnections.length > 0;

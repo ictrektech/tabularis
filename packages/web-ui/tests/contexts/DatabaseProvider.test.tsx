@@ -115,6 +115,23 @@ describe('DatabaseProvider', () => {
         vi.restoreAllMocks();
     });
 
+    it('respects static trigger capabilities without connection-local metadata', async () => {
+        vi.mocked(invoke).mockImplementation(async (command) => {
+            if (command === 'get_connections') return mockConnections;
+            if (command === 'get_driver_manifest') return {...mockMysqlManifest,
+                capabilities: {...mockMysqlManifest.capabilities, triggers: false}};
+            if (command === 'test_connection') return 'Connection successful';
+            if (command === 'get_available_databases') return ['testdb'];
+            return [];
+        });
+        const wrapper = ({children}: {children: React.ReactNode}) =>
+            React.createElement(DatabaseProvider, null, children);
+        const {result} = renderHook(() => useDatabase(), {wrapper});
+        await act(async () => {await result.current.connect('conn-123');});
+        await waitFor(() => expect(result.current.isConnectionOpen('conn-123')).toBe(true));
+        expect(vi.mocked(invoke).mock.calls.some(([command]) => command === 'get_triggers')).toBe(false);
+    });
+
     it('shares concurrent connection-list loads but refreshes on a later call', async () => {
         const wrapper = ({children}: {children: React.ReactNode}) =>
             React.createElement(DatabaseProvider, null, children);

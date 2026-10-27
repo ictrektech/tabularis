@@ -497,7 +497,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
         updateConnectionData(connId, {isLoadingTriggers: true});
         try {
             const result = await loadOptionalMetadata(
-                connectionDataMap[connId]?.metadata?.capabilities.triggers,
+                connectionDataMap[connId]?.metadata?.capabilities.triggers ?? connectionDataMap[connId]?.capabilities?.triggers,
                 () => client.call('get_triggers', {connectionId: connId}),
                 [],
             );
@@ -547,7 +547,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
                         {routines: []},
                     ),
                     loadOptionalMetadata(
-                        currentData.metadata?.capabilities.triggers,
+                        currentData.metadata?.capabilities.triggers ?? currentData.capabilities?.triggers,
                         () =>
                             client
                                 .call('get_triggers', {connectionId: connId, schema})
@@ -616,7 +616,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
                         {routines: []},
                     ),
                     loadOptionalMetadata(
-                        currentData.metadata?.capabilities.triggers,
+                        currentData.metadata?.capabilities.triggers ?? currentData.capabilities?.triggers,
                         () =>
                             client
                                 .call('get_triggers', {connectionId: connId, schema})
@@ -696,7 +696,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
                             {routines: []},
                         ),
                         loadOptionalMetadata(
-                            currentData.metadata?.capabilities.triggers,
+                            currentData.metadata?.capabilities.triggers ?? currentData.capabilities?.triggers,
                             () =>
                                 client
                                     .call('get_triggers', {connectionId: connId, schema: database})
@@ -797,7 +797,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
                             {routines: []},
                         ),
                         loadOptionalMetadata(
-                            currentData.metadata?.capabilities.triggers,
+                            currentData.metadata?.capabilities.triggers ?? currentData.capabilities?.triggers,
                             () =>
                                 client
                                     .call('get_triggers', {connectionId: connId, schema: database})
@@ -959,7 +959,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
                         {routines: []},
                     ),
                     loadOptionalMetadata(
-                        currentData.metadata?.capabilities.triggers,
+                        currentData.metadata?.capabilities.triggers ?? currentData.capabilities?.triggers,
                         () =>
                             client
                                 .call('get_triggers', {connectionId: connId, schema, database})
@@ -1069,7 +1069,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
                         {routines: []},
                     ),
                     loadOptionalMetadata(
-                        currentData.metadata?.capabilities.triggers,
+                        currentData.metadata?.capabilities.triggers ?? currentData.capabilities?.triggers,
                         () =>
                             client
                                 .call('get_triggers', {connectionId: connId, schema, database})
@@ -1579,7 +1579,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
                                     {routines: []},
                                 ),
                                 loadOptionalMetadata(
-                                    metadata?.capabilities.triggers,
+                                    metadata?.capabilities.triggers ?? capabilities?.triggers,
                                     () =>
                                         client
                                             .call('get_triggers', {connectionId, schema: firstDb})
@@ -1708,7 +1708,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
                                     {routines: []},
                                 ),
                                 loadOptionalMetadata(
-                                    metadata?.capabilities.triggers,
+                                    metadata?.capabilities.triggers ?? capabilities?.triggers,
                                     () =>
                                         client
                                             .call('get_triggers', {
@@ -1839,7 +1839,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
                                 {routines: []},
                             ),
                             loadOptionalMetadata(
-                                metadata?.capabilities.triggers,
+                                metadata?.capabilities.triggers ?? capabilities?.triggers,
                                 () =>
                                     client
                                         .call('get_triggers', {
@@ -1924,7 +1924,7 @@ export const DatabaseProvider = ({children}: {children: ReactNode}) => {
                             {routines: []},
                         ),
                         loadOptionalMetadata(
-                            metadata?.capabilities.triggers,
+                            metadata?.capabilities.triggers ?? capabilities?.triggers,
                             () =>
                                 client
                                     .call('get_triggers', {connectionId})

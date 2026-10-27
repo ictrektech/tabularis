@@ -1,3 +1,4 @@
+import {authenticateVosViewer} from '@/utils/vosAuth';
 import type {PlatformEnvironment} from '@/platform/capabilities';
 import {TabularisClient, type TabularisTransport} from './client';
 import type {SessionNegotiation} from './session';
@@ -26,6 +27,8 @@ export async function bootstrapTabularisRuntime(
         const transport = dependencies.createTauriTransport?.() ?? new TauriTransport();
         return {client: new TabularisClient(transport), session: null};
     }
+
+    if (!dependencies.createHttpTransport) await authenticateVosViewer();
 
     const transport = dependencies.createHttpTransport?.() ?? new HttpTransport();
     const session = await transport.initialize();

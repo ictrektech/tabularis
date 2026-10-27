@@ -1,3 +1,5 @@
+import {WEB_UI_BASE_PATH} from '@/routing';
+import {webPath} from '@/utils/webBase';
 import type {TabularisTransport} from '@/api/client';
 import type {
     CommandCallOptions,
@@ -857,13 +859,13 @@ export class HttpTransport implements TabularisTransport {
     }
 
     private websocketUrl(): string {
-        const url = new URL('/api/v1/events', this.baseUrl);
+        const url = new URL(this.url('/api/v1/events'));
         url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
         return url.toString();
     }
 
     private url(path: string): string {
-        return new URL(path, this.baseUrl).toString();
+        return new URL(path.startsWith('/') ? path.slice(1) : path, this.baseUrl).toString();
     }
 }
 
@@ -871,7 +873,7 @@ function encodeAssetPath(assetPath: string): string {
     return assetPath.split('/').map(encodeURIComponent).join('/');
 }
 
-const LOGIN_PATH = '/login';
+const LOGIN_PATH = webPath('/login');
 
 /** The security gate rejects with an empty 401, or an empty 403 for a stale CSRF token. */
 function isSessionRejection(response: Response): boolean {
@@ -895,12 +897,12 @@ function startDownload(url: string): void {
 }
 
 function browserOrigin(): string {
-    return typeof window === 'undefined' ? 'http://localhost' : window.location.origin;
+    return typeof window === 'undefined' ? 'http://localhost' : `${window.location.origin}${WEB_UI_BASE_PATH}`;
 }
 
 function normalizeBaseUrl(baseUrl: string): string {
     const url = new URL(baseUrl);
-    url.pathname = '/';
+    url.pathname = `${url.pathname.replace(/\/$/, '')}/`;
     url.search = '';
     url.hash = '';
     return url.toString();

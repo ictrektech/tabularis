@@ -1,0 +1,57 @@
+id: com.ictrek.pgv
+name:
+  zh-CN: PGV
+  en: PGV
+description:
+  zh-CN: 为 VOS 应用提供可复用的 Postgres 和 Redis 服务，预置应用数据库、用户和向量扩展，并提供 Tabularis 管理界面。
+  en: Shared Postgres and Redis services with pre-provisioned app databases, vector extensions, and an embedded Tabularis viewer.
+version: __APP_VERSION__
+author: ictrek
+category: [storage, ai]
+icon: icon.png
+arch: [amd64, arm64]
+
+frontend:
+  enabled: true
+  basePath: /app/com.ictrek.pgv
+
+platform:
+  version: ">=3.0.0"
+
+profiles:
+  - name: amd
+    title:
+      zh-CN: AMD64
+      en: AMD64
+    description:
+      zh-CN: x86_64 / AMD64 平台，使用 AMD_with_cuda 发布表中的 PGV 镜像。
+      en: x86_64 / AMD64 platform, using the PGV image from the AMD_with_cuda sheet.
+    caps:
+      arch: amd64
+    conflicts: [arm]
+  - name: arm
+    title:
+      zh-CN: ARM64
+      en: ARM64
+    description:
+      zh-CN: ARM64 平台，使用统一 ARM 发布表中的 PGV 镜像。
+      en: ARM64 platform, using the PGV image from the unified ARM release sheets.
+    caps:
+      arch: arm64
+    conflicts: [amd]
+
+require-profiles: true
+
+storage:
+  directories:
+    - path: data
+      mode: "0755"
+    - path: config
+      mode: "0755"
+    - path: redis
+      mode: "0755"
+    - path: viewer
+      mode: "0755"
+
+oauth2:
+  client: {}

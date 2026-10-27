@@ -326,7 +326,7 @@ export const Sidebar = () => {
             <aside className="w-16 bg-elevated border-r border-default flex flex-col items-center py-4 z-20">
                 <div className="mb-8" title="tabularis">
                     <img
-                        src="/logo.svg"
+                        src={`${import.meta.env.BASE_URL}logo.svg`}
                         alt="tabularis"
                         className="w-12 h-12 p-1.5 rounded-2xl mx-auto mb-4 shadow-lg shadow-accent-primary/30"
                         style={{

@@ -1,4 +1,4 @@
-import {describe, it, expect, vi, beforeEach} from 'vitest';
+import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest';
 import {renderHook, act, waitFor} from '@testing-library/react';
 
 // Mock the four context hooks the migration hook composes, plus the client.
@@ -80,6 +80,16 @@ const setPluginReady = (ready: boolean) => {
 };
 
 describe('useBuiltinDriverMigration', () => {
+    afterEach(() => vi.unstubAllEnvs());
+    it('keeps the validated built-in driver in VOS without a migration prompt', () => {
+        vi.stubEnv('BASE_URL', '/app/com.ictrek.pgv/');
+        databaseMock.connections = [builtinConn('pgv')];
+        catalogueMock.registryOffline = true;
+        const {result} = renderHook(() => useBuiltinDriverMigration('postgres', 'postgresql'));
+        expect(result.current.needsMigration).toBe(false);
+        expect(result.current.banner).toBeNull();
+    });
+
     beforeEach(() => {
         databaseMock.connections = [];
         databaseMock.openConnectionIds = [];

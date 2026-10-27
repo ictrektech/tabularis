@@ -1,3 +1,8 @@
+> **ICTrek VOS fork:** The maintained VOS app is PGV (`com.ictrek.pgv`), combining
+> PostgreSQL, Redis and the Tabularis viewer. See [VOS.md](VOS.md) for builds,
+> deployment, automatic connections and compatibility. Upstream desktop/registry
+> workflows have been removed; only our VOS package release workflow remains.
+
 <br />
 <p align="center">
   <img src=".github/assets/banner-light.png#gh-light-mode-only" alt="Tabularis" width="100%">
