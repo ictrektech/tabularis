@@ -324,10 +324,19 @@ export const Sidebar = () => {
         <div className="flex h-full">
             {/* Primary Navigation Bar (Narrow) */}
             <aside className="w-16 bg-elevated border-r border-default flex flex-col items-center py-4 z-20">
-                <div className="mb-8" title="tabularis">
+                <div
+                    className="mb-8"
+                    title={
+                        import.meta.env.BASE_URL === '/app/com.ictrek.pgv/' ? 'V-PGV' : 'tabularis'
+                    }
+                >
                     <img
-                        src={`${import.meta.env.BASE_URL}logo.svg`}
-                        alt="tabularis"
+                        src={`${import.meta.env.BASE_URL}${import.meta.env.BASE_URL === '/app/com.ictrek.pgv/' ? 'pgv-logo.svg' : 'logo.svg'}`}
+                        alt={
+                            import.meta.env.BASE_URL === '/app/com.ictrek.pgv/'
+                                ? 'V-PGV'
+                                : 'tabularis'
+                        }
                         className="w-12 h-12 p-1.5 rounded-2xl mx-auto mb-4 shadow-lg shadow-accent-primary/30"
                         style={{
                             backgroundColor: isDarkTheme
@@ -396,21 +405,23 @@ export const Sidebar = () => {
                 </nav>
 
                 <div className="mt-auto">
-                    <div className="relative mb-2">
-                        <button
-                            onClick={() => void platform.openExternalUrl(DISCORD_URL)}
-                            className="flex items-center justify-center w-12 h-12 rounded-lg transition-colors relative group text-secondary hover:bg-surface-secondary hover:text-accent"
-                        >
-                            <RailIndicator isActive={false} className="-left-2" />
-                            <div className="relative">
-                                <DiscordIcon size={24} />
-                            </div>
-                            <span className="absolute left-14 bg-surface-secondary text-primary text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-30 pointer-events-none">
-                                Discord
-                            </span>
-                        </button>
-                        <DiscordCommunityCallout />
-                    </div>
+                    {import.meta.env.BASE_URL !== '/app/com.ictrek.pgv/' && (
+                        <div className="relative mb-2">
+                            <button
+                                onClick={() => void platform.openExternalUrl(DISCORD_URL)}
+                                className="flex items-center justify-center w-12 h-12 rounded-lg transition-colors relative group text-secondary hover:bg-surface-secondary hover:text-accent"
+                            >
+                                <RailIndicator isActive={false} className="-left-2" />
+                                <div className="relative">
+                                    <DiscordIcon size={24} />
+                                </div>
+                                <span className="absolute left-14 bg-surface-secondary text-primary text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-30 pointer-events-none">
+                                    Discord
+                                </span>
+                            </button>
+                            <DiscordCommunityCallout />
+                        </div>
+                    )}
 
                     <NavItem to="/mcp" icon={Cpu} label={t('sidebar.mcpServer')} />
 

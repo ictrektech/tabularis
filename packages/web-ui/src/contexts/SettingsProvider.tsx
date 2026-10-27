@@ -1,4 +1,12 @@
-import {useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode} from 'react';
+import {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+    useMemo,
+    type ReactNode,
+} from 'react';
 import {useTranslation} from 'react-i18next';
 import {loadStartupConfig} from '@/utils/startupConfig';
 import {detectAiDefaults} from '@/utils/aiDefaults';
@@ -13,6 +21,7 @@ import {
 import {useTabularisClient} from '@/hooks/useTabularisClient';
 import {resolveAutoLanguage} from '@/i18n/language';
 import {useTheme} from '@/hooks/useTheme';
+import {useVosLocale} from '@/hooks/useVosLocale';
 
 const LANGUAGE_APPLICATION_TIMEOUT_MS = 3000;
 
@@ -50,7 +59,12 @@ export const SettingsProvider = ({children}: {children: ReactNode}) => {
     const client = useTabularisClient();
     const {currentTheme, isLoading: isThemeLoading} = useTheme();
     const themeFontFamily = currentTheme.typography.fontFamily.base;
-    const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+    const [storedSettings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+    const hostLocale = useVosLocale();
+    const settings = useMemo(
+        () => (hostLocale ? {...storedSettings, language: hostLocale} : storedSettings),
+        [storedSettings, hostLocale],
+    );
     const [isLoading, setIsLoading] = useState(true);
     const [languageState, setLanguageState] = useState<LanguageState>({
         language: null,

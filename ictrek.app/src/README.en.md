@@ -2,7 +2,8 @@
 
 PGV combines PostgreSQL 17, shared Redis and the Tabularis database workspace.
 Open PGV from the VOS sidebar as the VOS admin: PostgreSQL and Redis open
-automatically without entering database credentials. Use SQL queries, browse
+automatically without entering database credentials. The workspace opens directly,
+without the community promotion dialog on startup. Use SQL queries, browse
 tables and inspect Redis keys. The existing application ID, PostgreSQL endpoints,
 host ports, application databases, roles and storage paths remain compatible.
 
@@ -17,6 +18,11 @@ offline backup and run the same migration flow after an installation failure.
 
 This app provides a shared Postgres service on the `vos_default` Docker network
 and provisions separate databases, users, and extensions for WeKnora, Immich, and Nowen Video.
+
+The interface follows the VOS language on startup and live language changes.
+The Discord promotion entry is hidden. A blue/cyan voxel V identifies PGV in both
+the workspace and the VOS app list. The light-blue Production banner identifies the shared
+business database connection; it is not an error.
 
 ## Network Address
 

@@ -13,7 +13,9 @@ export const ProductionBanner = () => {
     if (active?.environment !== 'production') return null;
 
     return (
-        <div className="flex items-center justify-center gap-1.5 px-3 py-0.5 bg-accent-error/15 border-b border-accent-error/30 text-accent-error text-[11px] font-bold uppercase tracking-widest select-none shrink-0">
+        <div
+            className={`flex items-center justify-center gap-1.5 px-3 py-0.5 border-b ${import.meta.env.BASE_URL === '/app/com.ictrek.pgv/' ? 'bg-accent-primary/10 border-accent-primary/20 text-accent' : 'bg-accent-error/15 border-accent-error/30 text-accent-error'} text-[11px] font-bold uppercase tracking-widest select-none shrink-0`}
+        >
             <TriangleAlert size={11} />
             {t('environment.banner', {name: active.name})}
         </div>

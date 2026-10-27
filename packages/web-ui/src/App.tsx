@@ -242,6 +242,7 @@ export function App() {
 
             <CommunityModal
                 isOpen={
+                    import.meta.env.BASE_URL !== '/app/com.ictrek.pgv/' &&
                     !isSettingsLoading &&
                     settings.showWelcome !== false &&
                     !isCommunityModalDismissed

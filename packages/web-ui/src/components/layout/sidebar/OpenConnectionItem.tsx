@@ -188,9 +188,11 @@ export const OpenConnectionItem = ({
                         />
                     )}
 
-                    {/* Production ring: unmistakable red outline around the icon */}
+                    {/* Production connection indicator */}
                     {savedConnection?.environment === 'production' && (
-                        <div className="absolute inset-0.5 rounded-lg ring-2 ring-accent-error/70 pointer-events-none" />
+                        <div
+                            className={`absolute inset-0.5 rounded-lg ring-2 ${import.meta.env.BASE_URL === '/app/com.ictrek.pgv/' ? 'ring-accent-primary/40' : 'ring-accent-error/70'} pointer-events-none`}
+                        />
                     )}
 
                     {/* SSH badge */}
