@@ -96,3 +96,8 @@ after recreation. A build or a reachable health port alone is not VOS UI accepta
 
 The VOS workspace does not fetch the optional plugin registry on startup. Bundled
 PostgreSQL and Redis drivers remain available offline; Settings supports explicit refresh.
+
+If App Store publication fails after the GitHub Release exists, dispatch the
+existing `vos-release.yml` workflow with `version=<published version>`. It verifies
+the released archive digest and retries only App Store publication; it does not
+rebuild images, alter the release tag or replace the published archive.
