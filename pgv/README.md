@@ -12,7 +12,7 @@
 
 ## 预置数据库与应用接入
 
-PGV 启动时由 provision 脚本（`ictrek.app/src/init/provision.sh`）自动创建下列数据库、角色与扩展。`vos_default` 网络内的容器统一用别名 `pgv:5432`（`pgv` / `ictrek-pgv` / `shared-pgv` 三者等价）连接。凭据均可通过环境变量在 VOS 安装 UI 覆盖，provision 每次启动都会 `ALTER ROLE` 对齐密码并重建授权。
+PGV 启动时由 provision 脚本（`ictrek.app/src/init/provision.sh`）自动创建下列数据库、角色与扩展。`vos_default` 网络内的容器统一用别名 `pgv:5432`（`pgv` / `ictrek-pgv` / `shared-pgv` 三者等价）连接。凭据可通过相应环境变量覆盖，当前安装表单未列出的字段需在服务环境中配置，provision 每次启动都会 `ALTER ROLE` 对齐密码并重建授权。
 
 | 应用 | 主机 | 端口 | 用户 | 密码 | 数据库 | 角色 | 扩展 |
 | --- | --- | --- | --- | --- | --- | --- | --- |

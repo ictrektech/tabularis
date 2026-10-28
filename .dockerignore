@@ -19,3 +19,17 @@ src-tauri/gen
 
 !vendor/
 !LICENSE
+
+# Offline integration guide: include only the documentation it imports.
+!VOS.md
+!pgv/
+pgv/*
+!pgv/README.md
+!pgv/PG17-MIGRATION.md
+!ictrek.app/
+ictrek.app/*
+!ictrek.app/src/
+ictrek.app/src/*
+!ictrek.app/src/README.zh-CN.md
+!ictrek.app/src/README.en.md
+!ictrek.app/src/configs.yml

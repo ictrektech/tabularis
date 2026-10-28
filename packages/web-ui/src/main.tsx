@@ -31,6 +31,14 @@ const rootElement = document.getElementById('root') as HTMLElement;
 const environment = detectPlatformEnvironment();
 
 async function startApplication() {
+    if (
+        import.meta.env.BASE_URL === '/app/com.ictrek.pgv/' &&
+        window.location.pathname.replace(/\/$/, '') === '/app/com.ictrek.pgv/integration-guide'
+    ) {
+        const {startPgvGuide} = await import('@/pages/startPgvGuide');
+        await startPgvGuide(rootElement);
+        return;
+    }
     const {client: tabularisClient, session} = await bootstrapTabularisRuntime(environment);
     const platformCapabilities =
         environment === 'tauri'

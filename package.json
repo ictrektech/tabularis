@@ -87,6 +87,7 @@
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.13.2",
     "recharts": "^3.8.1",
+    "remark-gfm": "4.0.1",
     "semver": "^7.7.4",
     "sql-formatter": "^15.8.2",
     "util": "^0.12.5",
@@ -117,12 +118,12 @@
     "globals": "^16.5.0",
     "jsdom": "^28.1.0",
     "postcss": "^8.5.8",
+    "prettier": "^3.9.10",
     "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.58.0",
     "vite": "^7.3.1",
-    "vitest": "^4.1.2",
-    "prettier": "^3.9.10"
+    "vitest": "^4.1.2"
   },
   "packageManager": "pnpm@10.30.3"
 }

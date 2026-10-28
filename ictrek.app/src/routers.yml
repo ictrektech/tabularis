@@ -1,12 +1,23 @@
+router-type: structured
 routers:
   - id: pgv
     kind: page
     title:
-      zh-CN: PGV
-      en: PGV
+      zh-CN: 数据库连接器
+      en: Database Connector
     icon: lucide:database
     order: 200
     iframe-src: /app/com.ictrek.pgv/
     keep-alive: true
     entry-point: true
+    embed: true
+  - id: pgv-guide
+    kind: page
+    title:
+      zh-CN: 接入指南
+      en: Integration Guide
+    icon: lucide:book-open
+    order: 210
+    iframe-src: /app/com.ictrek.pgv/integration-guide
+    keep-alive: true
     embed: true

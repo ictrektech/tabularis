@@ -1,5 +1,7 @@
 # PGV · Tabularis
 
+VOS 的 PGV 分组下只有两个并列子页面：**数据库连接器**和**接入指南**。指南包含接入、建库、初始账户、配置参考和完整迁移维护文档。
+
 该应用统一提供 PostgreSQL 17、共享 Redis 和 Tabularis 数据管理界面。
 在 VOS 侧边栏打开 PGV，使用 VOS 管理员登录后，PostgreSQL 与 Redis 会自动连接，
 无需手动输入数据库凭据。启动时不显示社区推广弹窗，直接进入数据库工作区。
@@ -154,9 +156,10 @@ PGV 首次启动时由 provision 脚本自动创建 `nowen` 角色（非超级�
 随后将库与 `public` schema 的所有权和默认权限授予 `nowen`。nowen 应用侧
 仅负责业务表迁移，不需要超级用户权限。
 
-连接凭据可在 VOS 安装 UI 覆盖（`NOWEN_DATABASE_USER` /
-`NOWEN_DATABASE_PASSWORD` / `NOWEN_DATABASE_DBNAME`）；provision 脚本每次启动
-都会 `ALTER ROLE` 对齐密码并重建授权，因此覆盖后即可生效。
+Nowen 的 PGV 侧凭据可通过服务环境变量 `NOWEN_DB_USER`、`NOWEN_DB_PASSWORD`、
+`NOWEN_DB_NAME` 覆盖；当前安装表单尚未单独列出这些字段。Nowen 应用侧对应
+`NOWEN_DATABASE_USER`、`NOWEN_DATABASE_PASSWORD`、`NOWEN_DATABASE_DBNAME`。
+provision 每次启动都会对齐密码和授权，修改时需同步两侧配置。
 
 ## 数据持久化
 

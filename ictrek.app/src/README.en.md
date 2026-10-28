@@ -1,5 +1,7 @@
 # PGV · Tabularis
 
+The PGV group in VOS has exactly two sibling pages: **Database Connector** and **Integration Guide**. The guide covers connection settings, database creation, initial accounts, configuration reference and complete migration/maintenance documents.
+
 PGV combines PostgreSQL 17, shared Redis and the Tabularis database workspace.
 Open PGV from the VOS sidebar as the VOS admin: PostgreSQL and Redis open
 automatically without entering database credentials. The workspace opens directly,
@@ -171,10 +173,11 @@ database and `public` schema ownership plus default privileges to `nowen`. The
 nowen runtime user only runs application migrations and does not need superuser
 privileges.
 
-Credentials can be overridden in the VOS install UI (`NOWEN_DATABASE_USER` /
-`NOWEN_DATABASE_PASSWORD` / `NOWEN_DATABASE_DBNAME`); the provisioner
-`ALTER ROLE`s the password and re-grants on every start, so overrides take
-effect after the next pgv restart.
+Override Nowen credentials through PGV service environment variables
+`NOWEN_DB_USER`, `NOWEN_DB_PASSWORD` and `NOWEN_DB_NAME`; these fields are not
+currently listed separately in the installation form. The client uses
+`NOWEN_DATABASE_USER`, `NOWEN_DATABASE_PASSWORD` and `NOWEN_DATABASE_DBNAME`.
+Provisioning aligns passwords and grants on every start; update both sides together.
 
 ## Persistence
 

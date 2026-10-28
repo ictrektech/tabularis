@@ -7,7 +7,9 @@ WORKDIR /src
 RUN npm install -g pnpm@10.30.3
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store pnpm fetch --frozen-lockfile
-COPY roadmap.json ./
+COPY roadmap.json VOS.md ./
+COPY pgv/README.md pgv/PG17-MIGRATION.md ./pgv/
+COPY ictrek.app/src/README.zh-CN.md ictrek.app/src/README.en.md ictrek.app/src/configs.yml ./ictrek.app/src/
 COPY packages ./packages
 COPY plugins/manifest.schema.json ./plugins/manifest.schema.json
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
